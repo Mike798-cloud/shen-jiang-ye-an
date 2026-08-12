@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#17110d" />
   <title>申江夜案｜民国侦探网页解谜</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="paywall.css" />
 </head>
 <body>
   <div id="boot" class="boot">
@@ -56,6 +57,7 @@
       <div class="top-actions">
         <button id="bagBtn" class="mini-btn">案件袋 <span id="bagCount">0</span></button>
         <button id="hintBtn" class="mini-btn">当前页提示</button>
+        <button id="supportBtn" class="mini-btn support-mini-btn">支持作者 1元</button>
         <button id="soundBtn" class="mini-btn">声音：开</button>
         <button id="saveBtn" class="mini-btn">落笔存档</button>
       </div>
@@ -85,6 +87,7 @@
 
   <audio id="ambience" loop preload="auto"></audio>
   <audio id="sfx" preload="auto"></audio>
+  <script src="paywall.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

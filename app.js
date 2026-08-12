@@ -135,7 +135,7 @@ function freshState(expert=false){
 }
 let state=freshState(false);
 
-function getMeta(){try{return Object.assign({expertUnlocked:false,endings:[]},JSON.parse(localStorage.getItem(META_KEY)||'{}'))}catch{return {expertUnlocked:false,endings:[]}}}
+function getMeta(){try{return Object.assign({expertUnlocked:false,endings:[],supportAutoShown:false},JSON.parse(localStorage.getItem(META_KEY)||'{}'))}catch{return {expertUnlocked:false,endings:[],supportAutoShown:false}}}
 function setMeta(meta){localStorage.setItem(META_KEY,JSON.stringify(meta))}
 function expertAvailable(){return getMeta().expertUnlocked===true}
 function save(){localStorage.setItem(SAVE_KEY,JSON.stringify(state));refreshBoot()}
@@ -165,8 +165,38 @@ function refreshBoot(){
   const e=$('#expertGame');if(e)e.classList.toggle('hidden',!expertAvailable());
   const m=getMeta();const a=$('#archiveMeta');if(a)a.textContent=`报道档案 ${new Set(m.endings||[]).size}/3`;
 }
-function start(expert=false){state=freshState(expert);save();$('#boot').classList.add('hidden');$('#game').classList.remove('hidden');render();playFilm(FILMS.intro)}
-function continueGame(){if(load()){$('#boot').classList.add('hidden');$('#game').classList.remove('hidden');render();switchAmbience()}}
+function refreshSupportButton(){
+  const b=$('#supportBtn');if(!b)return;
+  const paid=typeof Paywall!=='undefined'&&Paywall.hasPaid();
+  b.textContent=paid?'支持：已记录':'支持作者 1元';
+  b.classList.toggle('is-supported',paid);
+  b.setAttribute('aria-label',paid?'支持记录已保存':'自愿支持作者1元');
+}
+function showSupport(silentIfPaid=false){
+  if(typeof Paywall==='undefined')return;
+  if(Paywall.hasPaid()){
+    refreshSupportButton();
+    if(!silentIfPaid)openModal('<div class="doc-head"><h3>支持记录已保存</h3><div class="doc-meta">谢谢你为这份夜班稿留下一盏灯</div></div><div class="doc-body"><p>本机浏览器已经记录过你的支持，不需要重复操作。</p><p class="footer-note">游戏进度、提示和全部结局都与支持状态无关。</p></div>');
+    return;
+  }
+  Paywall.show({qrCode:'paycode.png',price:'1元',title:'支持《申江夜案》',studio:'abc工作室'});
+}
+let supportAutoTimer=0;
+function scheduleAutoSupport(delay=900){
+  clearTimeout(supportAutoTimer);
+  supportAutoTimer=setTimeout(()=>{
+    const meta=getMeta();
+    if(meta.supportAutoShown)return;
+    if(typeof Paywall==='undefined'){scheduleAutoSupport(500);return}
+    if(Paywall.hasPaid()){meta.supportAutoShown=true;setMeta(meta);refreshSupportButton();return}
+    const filmOpen=!$('#cinematic').classList.contains('hidden');
+    const modalOpen=!$('#modal').classList.contains('hidden');
+    if(filmOpen||modalOpen){scheduleAutoSupport(650);return}
+    meta.supportAutoShown=true;setMeta(meta);showSupport(true);
+  },delay);
+}
+function start(expert=false){state=freshState(expert);save();$('#boot').classList.add('hidden');$('#game').classList.remove('hidden');render();playFilm(FILMS.intro);scheduleAutoSupport(900)}
+function continueGame(){if(load()){$('#boot').classList.add('hidden');$('#game').classList.remove('hidden');render();switchAmbience();scheduleAutoSupport(900)}}
 function resetGame(){if(confirm('确定清空《申江夜案》的本地调查进度吗？已解锁的复核模式与结局档案会保留。')){localStorage.removeItem(SAVE_KEY);state=freshState(false);refreshBoot()}}
 function unlocked(scene){return state.stage>=SCENES[scene].minStage}
 function stageName(){return ['','第一幕 · 夜班终校','第二幕 · 电话与时间','第三幕 · 补充采访','终幕 · 终稿'][state.stage]}
@@ -188,6 +218,7 @@ function sceneDesc(id){return {
 function render(){
   $('#bagCount').textContent=state.evidence.length;
   $('#soundBtn').textContent=`声音：${state.sound?'开':'关'}`;
+  refreshSupportButton();
   $('#hintBtn').classList.toggle('hidden',state.expert);
   if(!state.expert)$('#hintBtn').textContent='当前页提示';
   $('#objective').textContent=objective();
@@ -387,8 +418,9 @@ function playFilm(frames,cb){if(!frames||!frames.length){cb?.();return}let i=0;c
 function attach(){
   $('#newGame').onclick=()=>start(false);$('#continueGame').onclick=continueGame;$('#expertGame').onclick=()=>start(true);$('#resetGame').onclick=resetGame;
   $('#modalClose').onclick=closeModal;$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal()};
-  $('#bagBtn').onclick=bag;$('#hintBtn').onclick=hint;$('#soundBtn').onclick=toggleSound;$('#saveBtn').onclick=()=>{save();openModal('<div class="doc-head"><h3>已落笔存档</h3></div><div class="doc-body"><p>当前调查进度已经写入本机浏览器。</p></div>')};
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();$('#cinematic').classList.add('hidden')}if(e.key.toLowerCase()==='h'&&!state.expert)hint();if(e.key.toLowerCase()==='m')toggleSound()});
+  $('#bagBtn').onclick=bag;$('#hintBtn').onclick=hint;$('#supportBtn').onclick=()=>showSupport(false);$('#soundBtn').onclick=toggleSound;$('#saveBtn').onclick=()=>{save();openModal('<div class="doc-head"><h3>已落笔存档</h3></div><div class="doc-body"><p>当前调查进度已经写入本机浏览器。</p></div>')};
+  window.addEventListener('shenjiang-support-updated',refreshSupportButton);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(typeof Paywall!=='undefined'&&Paywall.isOpen()){Paywall.hide();return}closeModal();$('#cinematic').classList.add('hidden')}if(e.key.toLowerCase()==='h'&&!state.expert)hint();if(e.key.toLowerCase()==='m')toggleSound()});
 }
 
 async function checkImages(){const imgs=[...new Set([...Object.values(SCENES).map(x=>x.image),...Object.values(PEOPLE).map(x=>x.img).filter(Boolean),...Object.values(FILMS).flat().map(x=>x.img)])];return Promise.all(imgs.map(src=>new Promise(res=>{const im=new Image();im.onload=()=>res({src,ok:true});im.onerror=()=>res({src,ok:false});im.src=src})))}
@@ -415,4 +447,4 @@ async function runQA(){
   const d=document.createElement('div');d.className='qa-result';d.id='qaResult';d.textContent=errors.length?'QA_FAIL '+errors.join(' | '):'QA_PASS';document.body.appendChild(d);document.body.dataset.qa=errors.length?'FAIL':'PASS';return errors;
 }
 
-(function init(){attach();refreshBoot();if(new URLSearchParams(location.search).get('qa')==='1'){$('#boot').classList.add('hidden');$('#game').classList.remove('hidden');runQA()}})();
+(function init(){attach();refreshBoot();refreshSupportButton();if(new URLSearchParams(location.search).get('qa')==='1'){$('#boot').classList.add('hidden');$('#game').classList.remove('hidden');runQA()}})();
