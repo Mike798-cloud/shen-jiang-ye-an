@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#17110d" />
+  <title>申江夜案｜民国侦探网页解谜</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="boot" class="boot">
+    <div class="boot-card">
+      <div class="boot-kicker">申江晚报 · 民国二十五年</div>
+      <h1>申江夜案</h1>
+      <p class="boot-sub">死者在凌晨一点登上了报纸。问题是，他在午夜前究竟发生了什么。</p>
+      <div class="boot-actions">
+        <button id="newGame" class="btn btn-primary">开始调查</button>
+        <button id="continueGame" class="btn btn-secondary">继续上次</button>
+        <button id="expertGame" class="btn btn-ghost hidden">独立复核</button>
+        <button id="resetGame" class="btn btn-ghost">重置案件</button>
+      </div>
+      <p class="boot-note">建议佩戴耳机。关键声音均有文字替代；所有运行资源均为本地文件。</p>
+    </div>
+  </div>
+
+  <div id="cinematic" class="cinematic hidden" aria-live="polite">
+    <div class="film-frame">
+      <img id="filmImage" src="" alt="剧情过渡镜头" />
+      <div class="film-vignette"></div>
+      <div class="film-caption">
+        <div id="filmKicker" class="film-kicker"></div>
+        <div id="filmText" class="film-text"></div>
+      </div>
+      <button id="filmNext" class="film-next">继续 ›</button>
+    </div>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-sheet">
+      <button id="modalClose" class="modal-close" aria-label="关闭">×</button>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="game" class="game hidden">
+    <header class="topbar">
+      <div class="case-title">
+        <div class="micro">《申江晚报》调查记者 · 沈砚</div>
+        <h2>顾文洲死亡案</h2>
+      </div>
+      <div class="top-actions">
+        <button id="bagBtn" class="mini-btn">案件袋 <span id="bagCount">0</span></button>
+        <button id="hintBtn" class="mini-btn">提示</button>
+        <button id="soundBtn" class="mini-btn">声音：开</button>
+        <button id="saveBtn" class="mini-btn">保存</button>
+      </div>
+    </header>
+
+    <div class="case-layout">
+      <aside class="left-panel paper-panel">
+        <div class="panel-heading">城市调查图</div>
+        <div id="sceneNav" class="scene-nav"></div>
+        <div class="rule"></div>
+        <div class="panel-heading">程序便笺</div>
+        <div id="objective" class="objective"></div>
+        <div id="stageProgress" class="stage-progress"></div>
+      </aside>
+
+      <main id="sceneContent" class="scene-content paper-panel"></main>
+
+      <aside class="right-panel paper-panel">
+        <div class="panel-heading">关系人</div>
+        <div id="peoplePanel" class="people-panel"></div>
+        <div class="rule"></div>
+        <div class="panel-heading">已确认事实</div>
+        <div id="factPanel" class="fact-panel"></div>
+      </aside>
+    </div>
+  </div>
+
+  <audio id="ambience" loop preload="auto"></audio>
+  <audio id="sfx" preload="auto"></audio>
+  <script src="app.js"></script>
+</body>
+</html>
