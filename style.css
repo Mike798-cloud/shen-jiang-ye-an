@@ -30,3 +30,59 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:300;op
 .hint-history{display:grid;gap:10px;margin:8px 0 15px}.hint-entry{background:#f7ead0;border-left:3px solid #8a6b47;padding:10px 12px}.hint-entry p{margin:3px 0 0;line-height:1.8}.hint-level{font-size:10px;letter-spacing:.14em;color:#765d45;font-weight:700}.hint-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.hint-complete{font-size:12px;color:var(--green);font-weight:700}.notice{line-height:1.7}
 
 .hint-archive{margin-top:16px;border-top:1px dashed #9b8568;padding-top:10px}.hint-archive summary{cursor:pointer;font-weight:700;color:#664d37}.hint-archive-group{margin-top:10px;background:rgba(255,247,231,.55);padding:9px 10px}.hint-archive-title{font-size:11px;font-weight:700;color:#765b43;margin-bottom:5px}.hint-archive-row{display:grid;grid-template-columns:20px 1fr;gap:6px;font-size:11px;line-height:1.65;padding:4px 0;border-top:1px dotted rgba(118,91,67,.25)}.hint-archive-row strong{color:var(--red)}
+
+/* 2026-08 refinement: make the evidence area read as a reporter's physical desk, not a uniform card grid. */
+.evidence-desk{grid-template-columns:repeat(12,minmax(0,1fr));gap:19px 15px;padding:8px 4px 18px}
+.evidence-desk .evidence-file{grid-column:span 4;min-height:168px;overflow:visible}
+.evidence-desk .evidence-file[data-type="news"]{grid-column:span 7;border-top:4px double #6b5540;background:linear-gradient(90deg,#f7ecd6,#eee0c4)}
+.evidence-desk .evidence-file[data-type="slip"]{grid-column:span 4;min-height:145px;margin-top:18px;background:#ead9b8}
+.evidence-desk .evidence-file[data-type="ledger"]{grid-column:span 5}
+.evidence-desk .evidence-file[data-type="photo"]{grid-column:span 6;background:#d0ba94;padding:12px 14px 15px;border:7px solid #e7d6b6;box-shadow:0 8px 16px rgba(51,35,24,.26)}
+.evidence-desk .evidence-file[data-type="medical"]{grid-column:span 4;background:#f3ead7}
+.evidence-desk .evidence-file[data-type="note"],.evidence-desk .evidence-file[data-type="receipt"]{grid-column:span 3;min-height:155px}
+.evidence-desk .evidence-file:nth-child(5n+4){transform:rotate(.55deg) translateY(5px)}
+.evidence-desk .evidence-file:nth-child(5n+5){transform:rotate(-.7deg) translateY(-3px)}
+.material-mark{position:absolute;right:10px;top:9px;border:1px solid rgba(111,68,50,.52);color:#7b3d34;padding:2px 5px;font-size:9px;letter-spacing:.14em;transform:rotate(4deg);background:rgba(248,237,215,.68)}
+.evidence-file[data-type="note"]:after,.evidence-file[data-type="receipt"]:after{content:"";position:absolute;width:28px;height:9px;right:18px;top:-6px;border:2px solid rgba(72,62,52,.55);border-bottom:0;border-radius:10px 10px 0 0;transform:rotate(8deg)}
+.evidence-file[data-type="news"] p{max-width:42em;column-count:2;column-gap:18px;column-rule:1px solid rgba(104,83,61,.2)}
+
+/* Darkroom proof-boundary puzzle: click-based contact sheet rather than another form. */
+.darkroom-audit{background:linear-gradient(180deg,#d2b991,#e2cfaa);border-color:#755843}
+.audit-board{display:grid;gap:12px;margin:14px 0}
+.audit-row{display:grid;grid-template-columns:minmax(150px,.34fr) minmax(0,1fr);gap:12px;align-items:stretch}
+.audit-negative{background:#241b17;color:#e9d9be;border:5px solid #cfb892;box-shadow:0 4px 10px rgba(0,0,0,.25);padding:12px;display:flex;flex-direction:column;justify-content:center;min-height:92px;position:relative}
+.audit-negative:before,.audit-negative:after{content:"";position:absolute;left:5px;right:5px;height:6px;background:repeating-linear-gradient(90deg,#c8b28f 0 8px,transparent 8px 15px);opacity:.6}.audit-negative:before{top:4px}.audit-negative:after{bottom:4px}
+.audit-negative span{font-size:10px;letter-spacing:.14em;color:#bda98c}.audit-negative strong{font-size:16px;margin-top:5px;font-weight:500}
+.audit-tags{display:grid;gap:7px}
+.audit-tag{border:1px solid #9e8566;background:#fff2d9;color:#3c2e23;padding:9px 11px;text-align:left;line-height:1.55;position:relative}
+.audit-tag:before{content:"夹签";font-size:8px;letter-spacing:.14em;color:#8a6c50;margin-right:8px}
+.audit-tag.selected{background:#374b4c;color:#fff2da;border-color:#374b4c;box-shadow:inset 4px 0 0 #b69c70}
+
+/* Interviews get a human opening voice before the evidence-driven question. */
+.interview-opening{margin:7px 0 9px!important;padding:7px 9px;border-left:2px solid #8a6447;background:rgba(255,247,232,.48);font-size:12px!important;line-height:1.7!important;color:#4d3b2e!important;font-style:italic}
+.interview-voice{font-size:16px;line-height:1.8;color:#4b392c;background:#f1e0c2;border-left:3px solid #7d4b3c;padding:9px 12px;margin:4px 0 15px}
+
+/* Final responsibility chain: physical name slips instead of dropdown controls. */
+.responsibility-board{background:linear-gradient(145deg,#e2cda7,#d5bd94)}
+.final-grid{align-items:stretch}
+.final-item{background:#f8ead0;border:1px solid #a78d6a;padding:12px;box-shadow:0 4px 10px rgba(59,40,25,.12);position:relative}
+.final-item:before{content:"行为签";position:absolute;right:8px;top:7px;font-size:8px;letter-spacing:.14em;color:#8a6b4f}
+.responsibility-picks{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.responsibility-name{border:1px solid #a28a69;background:#fff5df;color:#3a2c21;padding:7px 8px;font-size:12px;transform:rotate(-.35deg)}
+.responsibility-name:nth-child(even){transform:rotate(.45deg)}
+.responsibility-name.selected{background:#6e302c;color:#fff1d8;border-color:#6e302c;box-shadow:0 3px 8px rgba(69,34,29,.22)}
+.responsibility-current{margin-top:10px;padding-top:7px;border-top:1px dotted #ac9473;font-size:10px;color:#725e4b}
+.expert-review{position:relative}.review-counter{float:right;border:1px solid #765a43;color:#765a43;padding:3px 6px;font-size:10px;letter-spacing:.09em;transform:rotate(1deg)}
+
+@media(max-width:1250px){
+  .evidence-desk .evidence-file,.evidence-desk .evidence-file[data-type="news"],.evidence-desk .evidence-file[data-type="ledger"],.evidence-desk .evidence-file[data-type="photo"],.evidence-desk .evidence-file[data-type="medical"],.evidence-desk .evidence-file[data-type="note"],.evidence-desk .evidence-file[data-type="receipt"],.evidence-desk .evidence-file[data-type="slip"]{grid-column:span 6}
+}
+@media(max-width:820px){
+  .evidence-desk .evidence-file,.evidence-desk .evidence-file[data-type="news"],.evidence-desk .evidence-file[data-type="ledger"],.evidence-desk .evidence-file[data-type="photo"],.evidence-desk .evidence-file[data-type="medical"],.evidence-desk .evidence-file[data-type="note"],.evidence-desk .evidence-file[data-type="receipt"],.evidence-desk .evidence-file[data-type="slip"]{grid-column:span 12;margin-top:0}
+  .evidence-file[data-type="news"] p{column-count:1}
+  .audit-row{grid-template-columns:1fr}
+  .audit-negative{min-height:78px}
+}
+@media(max-width:520px){
+  .responsibility-picks{display:grid;grid-template-columns:1fr 1fr}.responsibility-name{text-align:center;padding:8px 5px}
+}
