@@ -1,5 +1,7 @@
 'use strict';
 
+const APP_REVISION='2026-08-14-final-hardening';
+
 const SAVE_KEY='shenjiang-night-case-v2';
 const META_KEY='shenjiang-night-case-meta-v1';
 const $=s=>document.querySelector(s);
@@ -134,7 +136,7 @@ const REVIEW_VARIANTS={
 
 function freshState(expert=false){
   const variants=Object.keys(REVIEW_VARIANTS);const seed=Math.floor(Math.random()*999999);
-  const reviewQueue=expert?seededShuffle(variants,seed+73).slice(0,2):[];
+  const reviewQueue=expert?seededShuffle(variants,seed+73).slice(0,3):[];
   return {stage:1,scene:'newsroom',expert,sound:true,evidence:[],facts:[],interviews:{gu:false,li:false,su:false,fang:false},solved:{anomaly:false,route:false,photoAudit:false,timeline:false,final:false,review:false},hintUse:{1:0,2:0,3:0,4:0},hintHistory:{},timelinePick:[],routePick:[],photoAuditPick:{},finalPick:{injury:'',rescue:'',staging:'',tip:''},ending:null,completedOnce:false,shuffleSeed:seed,reviewVariant:'phone',reviewQueue,reviewIndex:0};
 }
 let state=freshState(false);
@@ -212,7 +214,7 @@ function resetGame(){if(confirm('确定清空《申江夜案》的本地调查�
 function unlocked(scene){return state.stage>=SCENES[scene].minStage}
 function stageName(){return ['','第一幕 · 夜班终校','第二幕 · 电话与时间','第三幕 · 补充采访','终幕 · 终稿'][state.stage]}
 function objective(){
-  if(state.expert){const names=(state.reviewQueue||[]).map(k=>REVIEW_VARIANTS[k]?.title.replace('复核任务 · ','')).filter(Boolean);return state.stage<4?`独立复核：不显示程序提示；材料与采访选项会打乱。终局随机抽取 ${names.length||2} 项交叉验证。`:'独立复核：完成责任链后，再通过两项随机证据边界复核。'}
+  if(state.expert){const names=(state.reviewQueue||[]).map(k=>REVIEW_VARIANTS[k]?.title.replace('复核任务 · ','')).filter(Boolean);return state.stage<4?`独立复核：不显示程序提示；材料与采访选项会打乱。终局随机抽取 ${names.length||3} 项交叉验证。`:'独立复核：完成责任链后，再通过三项随机证据边界复核。'}
   if(state.stage===1)return '从目前开放的场景翻阅原始材料，写下一处能够被纸面记录直接支持的异常。';
   if(state.stage===2){if(!state.solved.route)return '调查范围扩展到电话局与暗房；先把00:27外线按纸面记录接通。';if(!state.solved.photoAudit)return '线路已归档。到暗房把三份影像材料分别限制在它们真正能证明的范围内。';return '电话线路与暗房验片均已归档。继续整理当夜事件顺序。';}
   if(state.stage===3)return '新材料已经开放。补齐原件后，回到补充采访席重新询问关系人。';
@@ -233,7 +235,7 @@ function render(){
   $('#hintBtn').classList.toggle('hidden',state.expert);
   if(!state.expert)$('#hintBtn').textContent='当前页提示';
   $('#objective').textContent=objective();
-  $('#stageProgress').innerHTML=`${stageName()}${state.expert?'<span class="expert-badge">复核</span>':''}<br>原始材料 ${state.evidence.length}/18 · 补录 ${Object.values(state.interviews).filter(Boolean).length}/4${state.expert?`<br>随机复核：${Math.min(state.reviewIndex||0,(state.reviewQueue||[]).length)}/${(state.reviewQueue||[]).length||2}`:''}`;
+  $('#stageProgress').innerHTML=`${stageName()}${state.expert?'<span class="expert-badge">复核</span>':''}<br>原始材料 ${state.evidence.length}/18 · 补录 ${Object.values(state.interviews).filter(Boolean).length}/4${state.expert?`<br>随机复核：${Math.min(state.reviewIndex||0,(state.reviewQueue||[]).length)}/${(state.reviewQueue||[]).length||3}`:''}`;
   renderNav();renderPeople();renderFacts();renderScene();switchAmbience();
 }
 function renderNav(){
@@ -437,7 +439,7 @@ function ending(type){
     suppress:{title:'结局 · 压稿',text:'你先把材料交给巡捕房，报纸只留“案件重新调查中”。程序得到最大尊重，但公众暂时看不到一条提前写好的死讯怎样差点替代事实。几周后，内部整改开始，却没有头版记住它。'}
   }[type];
   state.ending=type;state.completedOnce=true;save();const meta=getMeta();meta.expertUnlocked=true;meta.endings=[...new Set([...(meta.endings||[]),type])];setMeta(meta);refreshBoot();
-  playFilm([...FILMS.ending],()=>openModal(`<div class="ending"><div class="edition">申江晚报 · ${type==='best'?'第二版':type==='sensational'?'号外':'暂缓稿'}</div><h3>${data.title}</h3><p>${data.text}</p><p><strong>独立复核已解锁。</strong>复核模式会隐藏程序提示、打乱同场景材料和采访选项，并在终局从多类证据边界题中随机抽取两项交叉验证。</p><p>报道档案：${new Set(meta.endings).size}/3。</p></div>`));
+  playFilm([...FILMS.ending],()=>openModal(`<div class="ending"><div class="edition">申江晚报 · ${type==='best'?'第二版':type==='sensational'?'号外':'暂缓稿'}</div><h3>${data.title}</h3><p>${data.text}</p><p><strong>独立复核已解锁。</strong>复核模式会隐藏程序提示、打乱同场景材料和采访选项，并在终局从多类证据边界题中随机抽取三项交叉验证。</p><p>报道档案：${new Set(meta.endings).size}/3。</p></div>`));
 }
 
 function switchAmbience(){if(!state.sound)return;const a=$('#ambience');const src=AUDIO[SCENES[state.scene].ambience]||AUDIO.rain;if(!a.src.endsWith(src)){a.src=src;a.volume=.16;a.play().catch(()=>{})}else if(a.paused)a.play().catch(()=>{})}
@@ -470,13 +472,19 @@ async function runQA(){
     if(!EVIDENCE.E17.body.includes('00:31')||EVIDENCE.E17.body.includes('00:18'))errors.push('return-time-regression');
     if(SCENES.study.image.includes('scene_study'))errors.push('modern-study-image-regression');
     if(!EVIDENCE.E07.body.includes('罗敬安')||!EVIDENCE.E15.body.includes('00:27')||!EVIDENCE.E15.body.includes('00:31'))errors.push('phone-chain-regression');
+    if(APP_REVISION!=='2026-08-14-final-hardening')errors.push('revision-marker');
+    if(!document.querySelector('link[href="paywall.css"]')||!document.querySelector('script[src="paywall.js"]'))errors.push('payment-assets-not-wired');
+    if(!$('#supportBtn')||$('#hintBtn')?.nextElementSibling!==$('#supportBtn'))errors.push('support-button-position');
+    if(!HINT_LIBRARY['1:study']||!HINT_LIBRARY['3:newsroom']||!HINT_LIBRARY['4:interviews'])errors.push('hint-page-coverage');
+    if(Object.keys(REVIEW_VARIANTS).length<5)errors.push('review-variant-count');
+    const expertProbe=freshState(true);if((expertProbe.reviewQueue||[]).length!==3||new Set(expertProbe.reviewQueue).size!==3)errors.push('review-queue-three');
     state=freshState(false);state.sound=false;state.evidence=['E01','E03'];state.scene='newsroom';render();if(!document.querySelector('[data-action="check-anomaly"]'))errors.push('stage1-render');hint();if((state.hintHistory['1:newsroom']||0)!==1)errors.push('hint-first-unlock');unlockNextHint();if((state.hintHistory['1:newsroom']||0)!==2)errors.push('hint-second-unlock');closeModal();state.scene='study';render();hint();if((state.hintHistory['1:study']||0)!==1||(state.hintHistory['1:newsroom']||0)!==2)errors.push('hint-page-history');closeModal();
     state.solved.anomaly=true;state.stage=2;state.scene='switchboard';state.evidence=['E01','E03','E05','E06','E07','E08','E09','E10','E11'];render();if(!document.querySelector('[data-action="check-route"]'))errors.push('route-render');
     state.solved.route=true;state.routePick=[...ROUTE_ORDER];state.scene='darkroom';render();if(!document.querySelector('[data-action="check-photo-audit"]'))errors.push('photo-audit-render');
     state.photoAuditPick={E08:'alibi',E09:'presence',E10:'authenticity'};state.solved.photoAudit=true;render();if(!document.querySelector('[data-action="check-timeline"]'))errors.push('timeline-render');
     state.solved.timeline=true;state.stage=3;state.scene='interviews';state.evidence=[...Object.keys(EVIDENCE).filter(id=>!['E12','E13','E14','E15'].includes(id))];render();if(!canInterview('gu')||!canInterview('li')||!canInterview('su'))errors.push('interview-prereq-basic');
     state.interviews={gu:true,li:true,su:true,fang:false};state.evidence.push('E12','E13','E14');if(!canInterview('fang'))errors.push('interview-prereq-fang');
-    state.interviews.fang=true;state.evidence.push('E15');state.stage=4;state.scene='finale';state.solved.final=true;state.expert=true;state.solved.review=false;state.reviewQueue=['phone','window'];state.reviewIndex=0;render();if(!document.querySelector('[data-review-answer]'))errors.push('expert-review-render');if((state.reviewQueue||[]).length!==2)errors.push('expert-review-count');
+    state.interviews.fang=true;state.evidence.push('E15');state.stage=4;state.scene='finale';state.solved.final=true;state.expert=true;state.solved.review=false;state.reviewQueue=['phone','window','newsroom'];state.reviewIndex=0;render();if(!document.querySelector('[data-review-answer]'))errors.push('expert-review-render');if((state.reviewQueue||[]).length!==3)errors.push('expert-review-count');
     const imageResults=await checkImages();for(const r of imageResults)if(!r.ok)errors.push('image:'+r.src);
     const html=document.body.innerHTML;if(/undefined|null\.title/.test(html))errors.push('undefined-render');
   }catch(e){errors.push('exception:'+e.message)}finally{state=original}
