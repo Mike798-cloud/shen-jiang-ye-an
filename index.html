@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#17110d" />
   <meta name="shenjiang-build" content="2026-08-14-final-hardening" />
+  <meta name="shenjiang-first-info-fix" content="2026-08-15" />
   <title>申江夜案｜民国侦探网页解谜</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="paywall.css" />
+  <link rel="stylesheet" href="first-info-fix.css" />
 </head>
 <body>
   <div id="boot" class="boot">
@@ -32,7 +34,6 @@
       <p class="boot-note">所有关键声音均有文字替代。存档保存在本机浏览器；独立复核将在首次结案后解锁。</p>
     </div>
   </div>
-
   <div id="cinematic" class="cinematic hidden" aria-live="polite">
     <div class="film-frame period-frame">
       <img id="filmImage" src="" alt="剧情过渡镜头" />
@@ -41,14 +42,12 @@
       <button id="filmNext" class="film-next">继续 ›</button>
     </div>
   </div>
-
   <div id="modal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modal-sheet">
       <button id="modalClose" class="modal-close" aria-label="关闭">×</button>
       <div id="modalBody"></div>
     </div>
   </div>
-
   <div id="game" class="game hidden">
     <header class="topbar">
       <div class="case-title">
@@ -63,7 +62,6 @@
         <button id="saveBtn" class="mini-btn">落笔存档</button>
       </div>
     </header>
-
     <div class="case-layout">
       <aside class="left-panel desk-panel">
         <div class="panel-heading">调查路线</div>
@@ -75,7 +73,6 @@
       </aside>
 
       <main id="sceneContent" class="scene-content"></main>
-
       <aside class="right-panel desk-panel">
         <div class="panel-heading">关系人剪报</div>
         <div id="peoplePanel" class="people-panel"></div>
@@ -90,5 +87,6 @@
   <audio id="sfx" preload="auto"></audio>
   <script src="paywall.js"></script>
   <script src="app.js"></script>
+  <script src="first-info-fix.js"></script>
 </body>
 </html>
