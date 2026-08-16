@@ -6,10 +6,12 @@
   <meta name="theme-color" content="#17110d" />
   <meta name="shenjiang-build" content="2026-08-14-final-hardening" />
   <meta name="shenjiang-first-info-fix" content="2026-08-15" />
+  <meta name="shenjiang-score-build" content="2026-08-16-score-settlement" />
   <title>申江夜案｜民国侦探网页解谜</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="paywall.css" />
   <link rel="stylesheet" href="first-info-fix.css" />
+  <link rel="stylesheet" href="score-system.css" />
 </head>
 <body>
   <div id="boot" class="boot">
@@ -26,6 +28,7 @@
             <button id="newGame" class="btn btn-primary">开始调查</button>
             <button id="continueGame" class="btn">继续上次</button>
             <button id="expertGame" class="btn hidden">独立复核</button>
+            <button id="scoreArchiveBtn" class="btn hidden">查看调查成绩</button>
             <button id="resetGame" class="btn btn-quiet">重置案件</button>
           </div>
         </div>
@@ -58,6 +61,7 @@
         <button id="bagBtn" class="mini-btn">案件袋 <span id="bagCount">0</span></button>
         <button id="hintBtn" class="mini-btn">当前页提示</button>
         <button id="supportBtn" class="mini-btn support-mini-btn">支持作者 1元</button>
+        <button id="scoreBtn" class="mini-btn hidden">调查成绩</button>
         <button id="soundBtn" class="mini-btn">声音：开</button>
         <button id="saveBtn" class="mini-btn">落笔存档</button>
       </div>
@@ -71,7 +75,6 @@
         <div id="objective" class="objective"></div>
         <div id="stageProgress" class="stage-progress"></div>
       </aside>
-
       <main id="sceneContent" class="scene-content"></main>
       <aside class="right-panel desk-panel">
         <div class="panel-heading">关系人剪报</div>
@@ -82,11 +85,11 @@
       </aside>
     </div>
   </div>
-
   <audio id="ambience" loop preload="auto"></audio>
   <audio id="sfx" preload="auto"></audio>
   <script src="paywall.js"></script>
   <script src="app.js"></script>
   <script src="first-info-fix.js"></script>
+  <script src="score-system.js"></script>
 </body>
 </html>
